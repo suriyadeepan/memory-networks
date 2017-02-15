@@ -12,6 +12,7 @@
 
 ![](https://camo.githubusercontent.com/40203757ab18aa02946e8befe55622347ea9fc90/68747470733a2f2f7777772e64726f70626f782e636f6d2f732f33726477667874383076343575716d2f53637265656e73686f74253230323031352d31312d313925323030302e35372e32372e706e673f646c3d31)
 
+- Richard Socher et al, [Ask Me Anything: Dynamic Memory Networks for Natural Language Processing](https://arxiv.org/abs/1506.07285)
 
 ### How to?
 
