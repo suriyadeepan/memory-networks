@@ -14,7 +14,7 @@ S. Sukhbaatar, A. Szlam, J. Weston, R. Fergus - [arxiv](http://arxiv.org/abs/150
 
 ## Dynamic Memory Networks 
 
-Richard Socher et al, [Ask Me Anything: Dynamic Memory Networks for Natural Language Processing](https://arxiv.org/abs/1506.07285)
+Richard Socher et al, *Ask Me Anything* - [arxiv](https://arxiv.org/abs/1506.07285)
 
 ![](https://yerevann.github.io/public/2016-02-06/dmn-details.png)
 
