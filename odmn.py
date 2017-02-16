@@ -25,7 +25,7 @@ class ODMN:
             #  notice the shape [batch_size, num_facts, sent_len]
             inputs_ = tf.placeholder(shape=[N,F,L], dtype=tf.int32)
             questions_ = tf.placeholder(shape=[N,Q], dtype=tf.int32)
-            answers_ = tf.placeholder(shape=[N], dtype=tf.int32)
+            answers_ = tf.placeholder(shape=[N,vocab_size], dtype=tf.int32)
             #
             # embeddings
             embs = tf.get_variable('emb', [vocab_size, d])
@@ -131,7 +131,8 @@ class ODMN:
             # predictions/probabilities
             preds = tf.nn.softmax(logits)
             # optimization
-            losses = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits, labels=answers_)
+            #losses = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits, labels=answers_)
+            losses = tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=answers_)
             loss = tf.reduce_mean(losses)
             train_op = tf.train.AdadeltaOptimizer(0.01).minimize(loss)        
 
@@ -146,4 +147,70 @@ class ODMN:
         ###
         # build graph
         __graph__()
+
+    ####
+    # training method
+    def train(self, data_, epochs=1000):
+        sess = tf.Session()
+        sess.run(tf.global_variables_initializer())
+        #
+        # prepare batches of data
+        batches = data_['batches']
+        trainS = data_['trS']
+        trainQ = data_['trQ']
+        trainA = data_['trA']
+
+        # train loop
+        mean_train_loss = 0
+        for i in range(epochs):
+            try:
+                # shuffle batches
+                np.random.shuffle(batches)
+                total_cost = 0.0
+                for start, end in batches:
+                    s = trainS[start:end]
+                    q = trainQ[start:end]
+                    a = trainA[start:end]
+                
+                _, train_loss = sess.run([self.train_op, self.loss], feed_dict = {
+                        self.inputs_ : s,
+                        self.questions_ : q,
+                        self.answers_ : a
+                    })
+                mean_train_loss += train_loss
+                
+                # every 'm' epochs
+                if i%100==0 and i:
+                    print('epoch : ', i, ', train loss : ', mean_train_loss/100)
+                    mean_train_loss = 0
+
+            except KeyboardInterrupt: # this will most definitely happen, so handle it
+                print('Interrupted by user at iteration {}'.format(i))
+                return
+
+        print('\n>> Training complete\n')
+
+
         
+
+if __name__ == '__main__':
+
+    batch_size = 32
+    # fetch data
+    data_, metadata = data.fetch(task_id=1, batch_size=batch_size)
+
+    # parameters
+    sent_len = metadata['sentence_size']
+    num_facts = metadata['memory_size']
+    ques_len = sent_len
+    vocab_size = metadata['vocab_size']
+    state_size = 20
+    num_episodes = 3
+
+    model = ODMN(batch_size= batch_size,
+            sent_len= metadata['sentence_size'],
+            num_facts= metadata['memory_size'],
+            ques_len= metadata['sentence_size'],
+            vocab_size= metadata['vocab_size'],
+            state_size= 20,
+            num_episodes= 3)
