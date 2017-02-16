@@ -14,6 +14,9 @@
 
 - Richard Socher et al, [Ask Me Anything: Dynamic Memory Networks for Natural Language Processing](https://arxiv.org/abs/1506.07285)
 
+![](https://yerevann.github.io/public/2016-02-06/dmn-details.png)
+
+
 ### How to?
 
 ```bash
